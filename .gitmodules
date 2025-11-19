@@ -1,0 +1,3 @@
+[submodule "better-mflowgen"]
+	path = better-mflowgen
+	url = https://github.com/thedubbers9/better-mflowgen-repo.git
