@@ -70,15 +70,10 @@ if [ "$UPDATE_ONLY" = true ]; then
   update_submodule
 fi
 
-# Check if mflowgen is available; run setup if missing
-if ! command -v mflowgen &> /dev/null; then
-  echo "'mflowgen' not found in PATH. Running setup script..."
-  cd "$SUBMODULE_PATH" || exit 1
-  source run_setup.sh
-  cd - >/dev/null || exit 1
-else
-  echo "'mflowgen' already available on PATH. Skipping setup."
-fi
+
+cd "$SUBMODULE_PATH"
+source run_setup.sh
+cd -
 
 # Define alias for convenience
 alias better_mflowgen='python3 $(pwd)/better-mflowgen/automated_run.py'

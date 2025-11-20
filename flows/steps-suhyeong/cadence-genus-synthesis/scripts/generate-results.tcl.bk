@@ -1,0 +1,26 @@
+#=========================================================================
+# generate-results.tcl
+#=========================================================================
+# Write Genus results.
+#
+# Author : Alex Carsello, James Thomas
+# Date   : July 14, 2020
+
+if { $uniquify_with_design_name == True } {
+  update_names -subdesign -force -prefix ${design_name}_
+}
+
+write_snapshot -directory results_syn -tag final
+write_design -basename results_syn/syn_out
+write_sdf > results_syn/syn_out.sdf
+write_spef > results_syn/syn_out.spef
+
+report_timing > Reps/timing.rpt
+report_timing -from [filter flop true [filter is_hierarchical false [find / -inst *]]] -to [filter flop true [filter is_hierarchical false [find / -inst *]]] > Reps/RR_timing.rpt
+report_power > Reps/power.rpt
+report_area > Reps/area.rpt
+report_gates > Reps/gates.rpt
+
+write_name_mapping
+
+file rename results_syn/syn_out.default_emulate_constraint_mode.sdc results_syn/syn_out._default_constraint_mode_.sdc

@@ -1,0 +1,46 @@
+#=========================================================================
+# pin-assignments.tcl
+#=========================================================================
+# The ports of this design become physical pins along the perimeter of the
+# design. The commands below will spread the pins along the left and right
+# perimeters of the core area. This will work for most designs, but a
+# detail-oriented project should customize or replace this section.
+#
+# Author : Christopher Torng
+# Date   : March 26, 2018
+
+#-------------------------------------------------------------------------
+# Pin Assignments
+#-------------------------------------------------------------------------
+
+# Take all ports and split into halves
+set ports_layer M4
+
+set buf 4
+set offset 0.300
+set base_pitch 0.192
+set pin_depth 1.536
+
+set all_ports       [dbGet top.terms.name]
+set length [llength $all_ports]
+set edge ([expr {floor([expr {sqrt($length)}])}])
+
+set sizeX [expr [dbGet top.fPlan.box_urx] - $pin_depth]
+set sizeY [expr [dbGet top.fPlan.box_ury] - $offset - $buf]
+
+set pitchX [expr floor([expr [expr $sizeX / $edge] / $base_pitch]) * $base_pitch]
+set pitchY [expr floor([expr [expr $sizeY / $edge] / $base_pitch]) * $base_pitch]
+
+setPinAssignMode -pinEditInBatch true
+set idx 0
+foreach port $all_ports {
+#  set x [expr [expr {int($idx / [expr int($edge)])}] * $pitchX]
+#  set y [expr [expr $pitchY * [expr {$idx % [expr int($edge)]}]] + $offset]
+
+  set x [expr [expr {$idx % [expr int($edge)]}] * $pitchX]
+  set y [expr [expr $pitchY * [expr {int($idx / [expr int($edge)])}]] + $offset]
+  editPin -layer $ports_layer -pin $port -assign $x $y -side INSIDE -pinDepth $pin_depth
+  puts "$x $y $idx"
+  incr idx
+}
+setPinAssignMode -pinEditInBatch false
